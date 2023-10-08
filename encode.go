@@ -52,13 +52,13 @@ func Encode(stream *Stream) (hex []byte, err error) {
 
 		endAddress := r.Address + uint32(len(r.Data))
 
-		for addr := r.Address; addr <= endAddress; addr += sectionSize {
+		for addr := r.Address; addr < endAddress; addr += sectionSize {
 			if addr != r.Address {
 				if err = emitAddress(addr); err != nil {
 					return nil, err
 				}
 			}
-			for subAddr := addr; subAddr <= (addr+sectionSize) && subAddr <= endAddress; subAddr += recordSize {
+			for subAddr := addr; subAddr < (addr+sectionSize) && subAddr < endAddress; subAddr += recordSize {
 				writeSize := min(recordSize, endAddress-subAddr+1)
 				dataOffset := subAddr - r.Address
 				emitRecord(Record{
