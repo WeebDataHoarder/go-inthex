@@ -2,7 +2,6 @@ package go_inthex
 
 import (
 	"encoding/binary"
-	"errors"
 	"strings"
 )
 
@@ -15,15 +14,7 @@ func Encode(stream *Stream) (hex []byte, err error) {
 	}
 
 	emitAddress := func(addr uint32) error {
-		if (addr & 0xFFFF) == 0 {
-			emitRecord(Record{
-				Code:    RecordExtendedLinearAddress,
-				Address: uint16(addr >> 16),
-				Data:    nil,
-			})
-
-			return nil
-		} else if (addr&0xFFF0000F) == 0 && (addr&0xF) == 0 {
+		if addr <= 0x000FFFF0 && (addr&(^RecordExtendedSegmentAddressMask)) == 0 {
 			emitRecord(Record{
 				Code:    RecordExtendedSegmentAddress,
 				Address: uint16(addr / 16),
@@ -32,7 +23,13 @@ func Encode(stream *Stream) (hex []byte, err error) {
 
 			return nil
 		} else {
-			return errors.New("non-aligned address")
+			emitRecord(Record{
+				Code:    RecordExtendedLinearAddress,
+				Address: uint16(addr >> 16),
+				Data:    nil,
+			})
+
+			return nil
 		}
 	}
 
@@ -40,8 +37,7 @@ func Encode(stream *Stream) (hex []byte, err error) {
 	const sectionSize = 1 << 16
 
 	for _, r := range stream.Regions {
-		baseAddress := r.Address
-		if err = emitAddress(baseAddress); err != nil {
+		if err = emitAddress(r.Address); err != nil {
 			return nil, err
 		}
 

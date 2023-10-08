@@ -12,6 +12,9 @@ import (
 
 type RecordCode uint8
 
+const ExtendedLinearAddressMask uint32 = 0xFFFF0000
+const RecordExtendedSegmentAddressMask uint32 = 0x000FFFF0
+
 const (
 	RecordData = RecordCode(iota)
 	RecordEOF
