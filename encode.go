@@ -10,7 +10,7 @@ func Encode(stream *Stream) (hex []byte, err error) {
 	var entries []string
 
 	emitRecord := func(r Record) {
-		entries = append(entries, r.String()+"\r\n")
+		entries = append(entries, r.String())
 	}
 
 	emitAddress := func(addr uint32) error {
@@ -43,7 +43,7 @@ func Encode(stream *Stream) (hex []byte, err error) {
 
 		// Add extra entries as needed
 		for _, e := range r.Extra {
-			entries = append(entries, e+"\r\n")
+			entries = append(entries, e)
 		}
 
 		endAddress := r.Address + uint32(len(r.Data))

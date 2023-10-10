@@ -26,7 +26,10 @@ func Decode(data []byte) (stream *Stream, err error) {
 		}
 
 		if d[0] != ':' {
-			currentRegion.Extra = append(currentRegion.Extra, strings.Trim(d, "\r\n"))
+			extra := strings.Trim(d, "\r\n")
+			if len(extra) > 0 {
+				currentRegion.Extra = append(currentRegion.Extra, extra)
+			}
 			continue
 		}
 

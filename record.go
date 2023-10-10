@@ -41,7 +41,7 @@ func (r Record) String() string {
 	buf[3] = uint8(r.Code)
 	copy(buf[4:], r.Data)
 	buf[len(buf)-1] = Checksum(buf[:len(buf)-1])
-	return ":" + strings.ToUpper(hex.EncodeToString(buf)) + "\r\n"
+	return ":" + strings.ToUpper(hex.EncodeToString(buf))
 }
 
 func RecordFromString(data string) (Record, error) {
