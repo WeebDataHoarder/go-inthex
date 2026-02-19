@@ -14,19 +14,22 @@ func Encode(stream *Stream) (hex []byte, err error) {
 	}
 
 	emitAddress := func(addr uint32) error {
+		var buf [2]byte
 		if addr <= 0x000FFFF0 && (addr&(^RecordExtendedSegmentAddressMask)) == 0 {
+			binary.BigEndian.PutUint16(buf[:], uint16(addr/16))
 			emitRecord(Record{
 				Code:    RecordExtendedSegmentAddress,
-				Address: uint16(addr / 16),
-				Data:    nil,
+				Address: 0,
+				Data:    buf[:],
 			})
 
 			return nil
 		} else {
+			binary.BigEndian.PutUint16(buf[:], uint16(addr>>16))
 			emitRecord(Record{
 				Code:    RecordExtendedLinearAddress,
-				Address: uint16(addr >> 16),
-				Data:    nil,
+				Address: 0,
+				Data:    buf[:],
 			})
 
 			return nil
